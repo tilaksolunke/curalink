@@ -1,0 +1,26 @@
+{
+  "name": "curalink-server",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.15.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "groq-sdk": "^1.1.2",
+    "mongoose": "^9.4.1",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
