@@ -1,26 +1,53 @@
-# Curalink - AI Medical Research Assistant
-
-A full-stack AI-powered medical research companion built with the MERN stack.
-
-## What it does
-- Accepts user medical context (disease, location, query)
-- Fetches relevant research publications from PubMed and OpenAlex
-- Fetches clinical trials from ClinicalTrials.gov
-- Filters and ranks results by relevance
-- Generates structured, research-backed responses using LLaMA 3.1 via Groq
-- Maintains conversation context across follow-up questions
+---
 
 ## Tech Stack
-- Frontend: React + Vite
-- Backend: Node.js + Express
-- Database: MongoDB
-- LLM: LLaMA 3.1 (via Groq API)
-- Data Sources: PubMed, OpenAlex, ClinicalTrials.gov
 
-## Architecture
-User Query -> Query Expansion -> Parallel API Fetching (PubMed + OpenAlex + ClinicalTrials) -> Relevance Filtering -> LLM Reasoning -> Structured Response
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React + Vite |
+| Backend | Node.js + Express |
+| Database | MongoDB + Mongoose |
+| LLM | LLaMA 3.1 8B via Groq API |
+| Publications | PubMed API + OpenAlex API |
+| Clinical Trials | ClinicalTrials.gov API v2 |
+| Deployment | Vercel (frontend) + Render (backend) |
 
-## Setup
+---
+
+## Key Engineering Decisions
+
+**1. Parallel API Fetching**
+All three data sources (PubMed, OpenAlex, ClinicalTrials) are fetched simultaneously using Promise.all — reducing response time significantly compared to sequential fetching.
+
+**2. Relevance Scoring Filter**
+After fetching 100+ papers, a scoring algorithm filters papers based on disease keyword presence in title (score: 3) vs abstract (score: 1). Only papers scoring ≥3 are passed to the LLM.
+
+**3. Follow-up Context Reuse**
+Follow-up questions reuse the publications saved from the first query instead of making redundant API calls. This saves time and keeps answers scoped to the original context.
+
+**4. Query Intent Detection**
+The system detects whether the user is asking about treatment, risk, diagnosis, mechanism, or clinical trials — and instructs the LLM to focus only on relevant papers.
+
+**5. Open-Source LLM Choice**
+LLaMA 3.1 8B via Groq was chosen over GPT/Gemini because:
+- It satisfies the open-source requirement
+- Groq's inference is extremely fast
+- Results are grounded in retrieved papers, not training data
+
+---
+
+## Features
+
+- 🔍 **Deep Retrieval** — Analyzes 100+ publications before showing top 8
+- 🧠 **Intent-Aware** — Detects query intent and filters accordingly  
+- 🔄 **Context Memory** — Follow-up questions use previous papers
+- 📍 **Location-Aware** — Filters clinical trials by user location
+- 📚 **Source Attribution** — Every claim linked to a real paper
+- 💬 **Multi-turn Chat** — Full conversation history in MongoDB
+
+---
+
+## Local Setup
 
 ### Prerequisites
 - Node.js 18+
@@ -29,43 +56,66 @@ User Query -> Query Expansion -> Parallel API Fetching (PubMed + OpenAlex + Clin
 
 ### Installation
 
-1. Clone the repository
-git clone https://github.com/yourusername/curalink.git
+```bash
+# Clone the repository
+git clone https://github.com/tilaksolunke/curalink.git
 cd curalink
 
-2. Install server dependencies
+# Install server dependencies
 cd server
 npm install
 
-3. Install client dependencies
+# Install client dependencies
 cd ../client
 npm install
 
-4. Set up environment variables
+# Set up environment variables
 cp server/.env.example server/.env
-Add your GROQ_API_KEY to server/.env
+# Add your GROQ_API_KEY and MONGO_URI to server/.env
 
-5. Start MongoDB
-mongod --dbpath /your/db/path
+# Start MongoDB
+mongod --dbpath D:/data/db
 
-6. Start the server
+# Start server (in one terminal)
 cd server
 npm run dev
 
-7. Start the client
+# Start client (in another terminal)
 cd client
 npm run dev
 
-8. Open http://localhost:5173
+# Open http://localhost:5173
+```
+
+---
 
 ## API Endpoints
-- POST /api/chat - Send a message and get AI response
-- GET /api/chat/:sessionId - Get conversation history
-- POST /api/research - Fetch research without chat
 
-## Key Design Decisions
-- Parallel API fetching with Promise.all for speed
-- Relevance scoring filters papers by disease keyword in title
-- Follow-up questions reuse saved publications to avoid redundant API calls
-- Query intent detection focuses LLM on treatment/risk/diagnosis/mechanism
-- LLaMA 3.1 8B via Groq chosen for speed, cost, and open-source compliance
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /api/chat | Send message, get AI response |
+| GET | /api/chat/:sessionId | Get conversation history |
+| POST | /api/research | Fetch research without chat |
+| GET | /api/health | Health check |
+
+---
+
+## Example Queries
+
+- "Latest treatment for Parkinson's disease"
+- "Clinical trials for diabetes in India"
+- "What are the risks of chemotherapy for lung cancer?"
+- "How does deep brain stimulation work?"
+- "Recent studies on Alzheimer's disease"
+
+---
+
+## Screenshots
+
+> Add screenshots here
+
+---
+
+## Author
+
+Built by [Tilak Solunke](https://github.com/tilaksolunke)
