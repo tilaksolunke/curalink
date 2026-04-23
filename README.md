@@ -2,7 +2,7 @@
 
 > Built for the Curalink Hackathon — A health companion that bridges the gap between patients and medical research.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://curalink.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://curalink-olive.vercel.app)
 [![Backend](https://img.shields.io/badge/Backend-Render-green)](https://curalink-birm.onrender.com)
 
 ---
